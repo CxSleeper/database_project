@@ -9,47 +9,73 @@ class user_records
 public:
 	string  username, password; // these will eventually go private
 	//will eventually turn all functions into class functions
+	class user_records *left;
+	class user_records *right;
 };
 
+typedef class user_records node;
 
+node *start = NULL;
 
-void new_user(user_records* usr)
+node *getnode()
 {
-	int i = 0;
-	char response = 'y' ;
-	while (i < SIZE && (response != 'n'&& response != 'N') ) // need to tighten up this function.  I want the loop to account for all input.
-	{
-		cout << "Enter your new username: ";
-		cin >> usr[i].username;
-		cout << "Enter your new password: ";
-		cin >> usr[i].password;
+	node *newnode;
+	newnode = new node[sizeof(node)]
+	cout << "Enter new username: \n";
+	cin >> newnode->username;
+	cout << "Enter password: \n"
+	cin>> newnode->password;
+	newnode->right = NULL;
+	newnode->left = NULL;
+	return newnode;
+}
 
-		cout << "Create another user? \n Press N to exit user creation: ";
-		cin >> response;
-		i++;
+void new_user()
+{
+	node *newnode;
+	node *temp;
+
+	newnode = getnode();
+	if(start == NULL)
+	{
+		start = newnode;
+	}
+	else
+	{
+		temp = start;
+		while(temp->right != NULL)
+		{
+			temp = temp->right;
+			temp->right = newnode;
+			newnode->left = temp;
+		}
 	}
 	//want this functioon to write to a doc file to remember data beyond program execution, it should append and not erase, it should also
 	//check for duplicate users, password duplicates are okay.
 }
-bool is_valid_credentials(const user_records *usr)
+bool is_valid_credentials()
 {
 	//want this function to read from an array that has been intialized with data from a doc file.
 	int i = 0;
+	node *temp = start;
 	string usr_check, pswd_check;
 	cout << "Enter your user name: ";
 	cin >> usr_check;
 	cout << "Enter your password: ";
 	cin >> pswd_check;
-	for (i = 0; i < SIZE; i++)
-	{// is there a way to accept case flaws when entering a user name?
-		if (usr_check == usr[i].username) // these embedded loops will prevent someone from knowing if they got a user name right.
+	do
+	{
+		temp = temp->right;
+		if(usr_check == temp->username)
 		{
-			if (pswd_check == usr[i].password)
+			if(pswd_check == temp->password)
 			{
 				return true;
 			}
 		}
 	}
+	while(temp->right != NULL);
+	
 	return false;
 }
 
@@ -57,7 +83,7 @@ bool is_valid_credentials(const user_records *usr)
 
 int main()
 {
-	user_records usr[50]; // end goal is using dynamic memory
+	/* user_records usr[50]; Changed from array to double linked list.*/ 
 
 	/*cout << "Enter your username: ";
 	cin >> username;
@@ -65,7 +91,7 @@ int main()
 	cin >> password;*/
 	 
 
-	new_user(usr); // will create a condition asking user if they are new
+	new_user(); // will create a condition asking user if they are new
 
 	if (is_valid_credentials(usr))
 	{
